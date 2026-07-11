@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0d1117">
+<title>DeltaStream · 三角洲行动串流触控与陀螺仪</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+    --text:#e6edf3; --text2:#8b949e; --text3:#6e7681;
+    --accent:#4fc3f7; --accent2:#7c4dff; --green:#3fb950; --orange:#d29922; --red:#f85149;
+    --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.4);
+    --maxw:880px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.7;
+    font-size:16px;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* 顶部导航 */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(13,17,23,.88);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav{
+    max-width:var(--maxw);margin:0 auto;padding:12px 16px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;color:var(--text)}
+  .logo-dot{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:inline-block}
+  .nav-links{display:flex;gap:4px;margin-left:auto}
+  .nav-links a{
+    color:var(--text2);padding:8px 12px;border-radius:8px;font-size:14px;
+    transition:all .2s;
+  }
+  .nav-links a:hover{color:var(--text);background:var(--bg3);text-decoration:none}
+  .menu-btn{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:14px}
+
+  main{max-width:var(--maxw);margin:0 auto;padding:0 16px}
+
+  /* Hero */
+  .hero{padding:64px 0 48px;text-align:center}
+  .hero h1{font-size:clamp(28px,6vw,44px);margin:0 0 16px;line-height:1.2;
+    background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .tag{display:inline-block;padding:6px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:99px;font-size:13px;color:var(--text2);margin-bottom:20px}
+  .hero p{color:var(--text2);font-size:clamp(15px,3.5vw,18px);max-width:600px;margin:0 auto 28px}
+  .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{padding:12px 24px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(79,195,247,.3)}
+  .btn-ghost{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+
+  /* 区块 */
+  section{padding:40px 0;border-top:1px solid var(--border)}
+  section:first-of-type{border-top:none}
+  h2{font-size:clamp(22px,5vw,30px);margin:0 0 8px}
+  h2 .num{color:var(--accent);font-family:monospace;margin-right:10px}
+  .sub{color:var(--text2);margin:0 0 28px;font-size:15px}
+
+  /* 功能卡片 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px;transition:transform .2s,border-color .2s;
+  }
+  .card:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .card .ic{font-size:26px;margin-bottom:10px}
+  .card h3{margin:0 0 6px;font-size:16px}
+  .card p{margin:0;color:var(--text2);font-size:14px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;margin-left:6px;vertical-align:middle}
+  .badge-free{background:rgba(63,185,80,.15);color:var(--green)}
+  .badge-pro{background:rgba(210,153,34,.15);color:var(--orange)}
+
+  /* 对比表 */
+  .compare{
+    background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .compare table{width:100%;border-collapse:collapse;font-size:14px}
+  .compare th,.compare td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--border)}
+  .compare th{background:var(--bg3);font-weight:600;color:var(--text2);font-size:13px}
+  .compare td:first-child{font-weight:500}
+  .compare tr:last-child td{border-bottom:none}
+  .yes{color:var(--green);font-weight:700}
+  .no{color:var(--text3)}
+  .pro-cell{color:var(--orange);font-weight:600}
+
+  /* Pro 卡片 */
+  .pro-grid{display:grid;grid-template-columns:1fr;gap:16px}
+  .pro-card{
+    background:linear-gradient(135deg,rgba(124,77,255,.08),rgba(79,195,247,.05));
+    border:1px solid rgba(124,77,255,.3);border-radius:var(--radius);padding:24px;
+  }
+  .pro-card .price{font-size:36px;font-weight:800;color:var(--accent)}
+  .pro-card .price small{font-size:15px;color:var(--text2);font-weight:400}
+  .pro-card ul{margin:16px 0 0;padding-left:18px}
+  .pro-card li{margin-bottom:8px;font-size:14px}
+  .pro-card li::marker{color:var(--accent)}
+
+  /* 捐赠 */
+  .donate-box{
+    background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;text-align:center;
+  }
+  .donate-box .qr{width:180px;height:180px;border-radius:12px;margin:12px auto;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:13px;border:1px dashed var(--border)}
+  .donate-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+
+  /* FAQ */
+  .faq-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  .faq-q{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500}
+  .faq-q .arrow{transition:transform .2s;color:var(--text2)}
+  .faq-item.open .arrow{transform:rotate(180deg)}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 20px;color:var(--text2);font-size:14px}
+  .faq-item.open .faq-a{max-height:300px;padding:0 20px 16px}
+
+  /* 合规提示 */
+  .notice{
+    background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.3);
+    border-radius:10px;padding:14px 18px;font-size:13px;color:var(--text2);margin-top:16px;
+  }
+  .notice strong{color:var(--orange)}
+
+  footer{border-top:1px solid var(--border);padding:32px 16px;text-align:center;color:var(--text3);font-size:13px}
+
+  @media(max-width:640px){
+    .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--border);padding:8px;margin:0}
+    .nav-links.open{display:flex}
+    .nav-links a{padding:12px 16px}
+    .menu-btn{display:block;margin-left:auto}
+    .hero{padding:40px 0 32px}
+    .compare{overflow-x:auto}
+    .compare table{min-width:480px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><span class="logo-dot"></span>DeltaStream</div>
+    <button class="menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')">菜单</button>
+    <nav class="nav-links">
+      <a href="#features">功能</a>
+      <a href="#compare">对比</a>
+      <a href="#pro">Pro</a>
+      <a href="#donate">捐赠</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- Hero -->
+<div class="hero">
+  <span class="tag">PC → 平板 · 1:1 串流 · 三角洲行动专属优化</span>
+  <h1>把电脑变成你的手游主机</h1>
+  <p>基于 Sunshine + Moonlight 的串流方案，专为《三角洲行动》打造的触控按键、陀螺仪瞄准、一键压枪与开镜自动降灵敏度。低延迟、高帧率、画质清晰，平板秒变 3A 终端。</p>
+  <div class="hero-btns">
+    <a class="btn btn-primary" href="#pro">获取 Pro</a>
+    <a class="btn btn-ghost" href="#features">查看功能</a>
+  </div>
+</div>
+
+<!-- 功能 -->
+<section id="features">
+  <h2><span class="num">01</span>核心功能</h2>
+  <p class="sub">以下功能全部免费开源，任何人皆可使用与改进。</p>
+  <div class="grid">
+    <div class="card">
+      <div class="ic">📡</div>
+      <h3>低延迟串流<span class="badge badge-free">免费</span></h3>
+      <p>Sunshine 服务端 + QSV/HEVC 编码 + FEC 10%，USB 直连零丢包，1080p/60fps 稳定输出。</p>
+    </div>
+    <div class="card">
+      <div class="ic">🎮</div>
+      <h3>可视化按键编辑器<span class="badge badge-free">免费</span></h3>
+      <p>拖拽布局、大小/透明度/颜色调节、8 向摇杆、长按轮盘、切换模式、多套方案保存。</p>
+    </div>
+    <div class="card">
+      <div class="ic">陀</div>
+      <h3>陀螺仪瞄准<span class="badge badge-free">免费</span></h3>
+      <p>轴映射修正（参考 GyroWiki/JoyShockMapper）、软分层平滑、收紧型阈值、自动校准。</p>
+    </div>
+    <div class="card">
+      <div class="ic">🎯</div>
+      <h3>开镜自动降灵敏度<span class="badge badge-free">免费</span></h3>
+      <p>ADS 独立灵敏度组，开镜瞬间切换更低灵敏度，远距离压枪更稳。可开关。</p>
+    </div>
+    <div class="card">
+      <div class="ic">💥</div>
+      <h3>一键压枪<span class="badge badge-free">免费</span></h3>
+      <p>开火时自动 Y 轴下压补偿后坐力，强度可调（步枪 1.0-2.0，冲锋枪 0.5-1.0）。</p>
+    </div>
+    <div class="card">
+      <div class="ic">👆</div>
+      <h3>手搓触摸瞄准<span class="badge badge-free">免费</span></h3>
+      <p>右半屏滑动控视角，独立灵敏度与垂直缩放，与陀螺仪并存互不干扰。</p>
+    </div>
+    <div class="card">
+      <div class="ic">⚡</div>
+      <h3>摇杆 120Hz<span class="badge badge-free">免费</span></h3>
+      <p>输入间隔 8ms（120Hz），移动手感丝滑，USB 带宽充足无压力。</p>
+    </div>
+    <div class="card">
+      <div class="ic">📊</div>
+      <h3>性能叠加层<span class="badge badge-free">免费</span></h3>
+      <p>实时显示延迟/帧率/丢帧/RTT，优化效果看得见。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 对比 -->
+<section id="compare">
+  <h2><span class="num">02</span>免费版 vs Pro</h2>
+  <p class="sub">所有核心玩法功能完全免费；Pro 解锁的是云端服务与优先支持，不锁任何功能。</p>
+  <div class="compare">
+    <table>
+      <thead>
+        <tr><th>能力</th><th>免费版</th><th>Pro 赞助者</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>串流 / 触控 / 陀螺仪 / 压枪</td><td class="yes">✓ 完整</td><td class="yes">✓ 完整</td></tr>
+        <tr><td>按键方案本地保存</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>多设备云配置同步</td><td class="no">—</td><td class="pro-cell">✓ 云端</td></tr>
+        <tr><td>独家配置模板库（热门游戏预设）</td><td class="no">—</td><td class="pro-cell">✓ 一键下载</td></tr>
+        <tr><td>Bug 响应时效</td><td>尽力而为</td><td class="pro-cell">48 小时内</td></tr>
+        <tr><td>赞助者徽章 + Pro 社群</td><td class="no">—</td><td class="pro-cell">✓</td></tr>
+        <tr><td>新功能提前体验</td><td class="no">—</td><td class="pro-cell">✓ Beta 通道</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="notice">
+    <strong>GPLv3 合规声明：</strong>本项目为 Moonlight Android 的 fork，遵循 GPLv3 协议开源。所有 App 内功能（含陀螺仪、压枪、ADS 灵敏度等）<strong>永久免费开源</strong>，任何人均可自由使用、修改、分发。Pro 仅对附加的<strong>云端服务资源与运营支持</strong>收费，不锁定任何功能。
+  </div>
+</section>
+
+<!-- Pro -->
+<section id="pro">
+  <h2><span class="num">03</span>Pro 赞助者</h2>
+  <p class="sub">一次性买断，享云端服务与优先支持，支持开发者持续优化。</p>
+  <div class="pro-grid">
+    <div class="pro-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <h3 style="margin:0 0 4px">Pro 终身版</h3>
+          <div class="price">¥38 <small>一次性买断</small></div>
+        </div>
+        <a class="btn btn-primary" href="#donate">立即支持</a>
+      </div>
+      <ul>
+        <li>☁️ 多设备云配置同步（换平板/重装一键恢复）</li>
+        <li>📚 独家配置模板库（三角洲/CS2/Apex 等热门预设云端下载）</li>
+        <li>⚡ 48 小时内 Bug 响应</li>
+        <li>🎖 赞助者徽章 + Pro 专属社群</li>
+        <li>🚀 新功能 Beta 通道提前体验</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 捐赠 -->
+<section id="donate">
+  <h2><span class="num">04</span>支持开发者</h2>
+  <p class="sub">如果这个项目帮到了你，欢迎请作者喝杯咖啡。任意金额都是鼓励。</p>
+  <div class="donate-box">
+    <div class="qr" id="qr">爱发电二维码<br>（占位）</div>
+    <p style="color:var(--text2);font-size:14px;margin:8px 0 0">扫码进入爱发电页面，自选金额捐赠</p>
+    <div class="donate-row">
+      <a class="btn btn-primary" href="https://afdian.net" target="_blank" rel="noopener">爱发电捐赠</a>
+      <a class="btn btn-ghost" href="#pro">购买 Pro 终身版</a>
+    </div>
+    <p style="color:var(--text3);font-size:12px;margin-top:16px">捐赠后请联系作者（附订单号）开通 Pro 身份</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <h2><span class="num">05</span>常见问题</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+      不买 Pro 能用全部功能吗？<span class="arrow">▾</span>
+    </div>
+    <div class="faq-a">能。所有串流、触控、陀螺仪、压枪、ADS 灵敏度等功能永久免费。Pro 只增加云端服务与优先支持，不锁任何玩法功能。</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+      为什么不直接卖 App？<span class="arrow">▾</span>
+    </div>
+    <div class="faq-a">Moonlight 采用 GPLv3 开源协议，fork 版本必须同样开源，不能对开源功能本身收费。因此我们采用"功能全免费 + 云端服务/优先支持收费"的合规模式。</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+      需要哪些前置条件？<span class="arrow">▾</span>
+    </div>
+    <div class="faq-a">PC 端安装 Sunshine 服务（需 SYSTEM 权限+global_input=1 以支持反作弊游戏输入注入）；平板端安装本 App；建议 USB 直连以获得最低延迟。</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+      支持其他游戏吗？<span class="arrow">▾</span>
+    </div>
+    <div class="faq-a">支持。当前针对《三角洲行动》深度调优，按键方案与陀螺仪参数可自定义，适用于任何 PC 射击/动作游戏。Pro 用户可从模板库一键下载热门游戏预设。</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+      陀螺仪手感怎么调？<span class="arrow">▾</span>
+    </div>
+    <div class="faq-a">长按右下角"设置"按钮 600ms 进入陀螺仪设置页。首次使用务必先校准（静止 2 秒）。建议从默认值开始，逐步微调灵敏度与软平滑阈值。</div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>DeltaStream · 基于 Moonlight Android (GPLv3) · 仅供学习交流</p>
+  <p>本项目不 affiliated 于《三角洲行动》官方，所有游戏商标归原厂商所有</p>
+</footer>
+
+</body>
+</html>

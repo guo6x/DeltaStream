@@ -1,0 +1,35 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: The option setting 'android.overridePathCheck=true' is experimental.
+The current default is 'false'.
+WARNING: BuildType 'debug' is both debuggable and has 'isMinifyEnabled' set to true.
+Debuggable builds are no longer name minified and all code optimizations and obfuscation will be disabled.
+WARNING: BuildType 'debug' is both debuggable and has 'isMinifyEnabled' set to true.
+Debuggable builds are no longer name minified and all code optimizations and obfuscation will be disabled.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preNonRootDebugBuild UP-TO-DATE
+> Task :app:generateNonRootDebugBuildConfig UP-TO-DATE
+> Task :app:javaPreCompileNonRootDebug UP-TO-DATE
+> Task :app:checkNonRootDebugAarMetadata UP-TO-DATE
+> Task :app:generateNonRootDebugResValues UP-TO-DATE
+> Task :app:mapNonRootDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateNonRootDebugResources UP-TO-DATE
+> Task :app:mergeNonRootDebugResources UP-TO-DATE
+> Task :app:packageNonRootDebugResources UP-TO-DATE
+> Task :app:parseNonRootDebugLocalResources UP-TO-DATE
+> Task :app:createNonRootDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksNonRootDebug UP-TO-DATE
+> Task :app:processNonRootDebugMainManifest UP-TO-DATE
+> Task :app:processNonRootDebugManifest UP-TO-DATE
+> Task :app:processNonRootDebugManifestForPackage UP-TO-DATE
+> Task :app:processNonRootDebugResources UP-TO-DATE
+
+> Task :app:compileNonRootDebugJavaWithJavac
+ע: ĳЩ�����ļ�ʹ�û򸲸����ѹ�ʱ�� API��
+ע: �й���ϸ��Ϣ, ��ʹ�� -Xlint:deprecation ���±��롣
+
+BUILD SUCCESSFUL in 1m 6s
+16 actionable tasks: 1 executed, 15 up-to-date

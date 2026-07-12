@@ -3,6 +3,7 @@ package com.limelight.ui.gamemenu;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -16,12 +17,13 @@ import com.limelight.binding.input.KeyboardTranslator;
 import com.limelight.nvstream.NvConnection;
 import com.limelight.nvstream.input.KeyboardPacket;
 import com.limelight.preferences.PreferenceConfiguration;
+import com.limelight.touch.TouchGamepadEditorActivity;
 import com.limelight.ui.floating.FloatingMenuButton;
 
 /**
- * 游戏内悬浮菜单 DialogFragment。
- * 借鉴阿西西 GameMenuFragment 设计，精简为 DeltaStream 所需核心功能。
- * 使用原生 DialogFragment（非 androidx），与项目现有 API 一致。
+ * 游戏内统一设置菜单。
+ * 整合了按键编辑器、陀螺仪设置、虚拟手柄、显示设置、快捷键等功能。
+ * 作为串流中唯一的设置入口，替代之前的四指点击和长按设置按钮。
  */
 public class GameMenuDialog extends DialogFragment {
 
@@ -55,23 +57,33 @@ public class GameMenuDialog extends DialogFragment {
     }
 
     private void bindViews(Dialog dialog) {
-        Button btnPerformance = dialog.findViewById(R.id.btn_performance);
+        Button btnKeyEditor = dialog.findViewById(R.id.btn_key_editor);
+        Button btnGyroSettings = dialog.findViewById(R.id.btn_gyro_settings);
         Button btnGamePad = dialog.findViewById(R.id.btn_game_pad);
-        Button btnTouchSens = dialog.findViewById(R.id.btn_touch_sensitivity);
         Button btnSoftKeyboard = dialog.findViewById(R.id.btn_soft_keyboard);
-        Button btnQuickKeys = dialog.findViewById(R.id.btn_quick_keys);
+        Button btnPerformance = dialog.findViewById(R.id.btn_performance);
         Button btnMouseCursor = dialog.findViewById(R.id.btn_mouse_cursor);
+        Button btnQuickKeys = dialog.findViewById(R.id.btn_quick_keys);
         Button btnUnlink = dialog.findViewById(R.id.btn_unlink);
         Button btnExit = dialog.findViewById(R.id.btn_exit);
 
-        // 初始化按钮状态
-        updateButtonStates(btnPerformance, btnGamePad, btnMouseCursor);
+        updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
 
-        // 性能信息切换
-        btnPerformance.setOnClickListener(v -> {
+        // 按键编辑器
+        btnKeyEditor.setOnClickListener(v -> {
+            dismiss();
             if (game != null) {
-                game.togglePerformanceOverlay();
-                updateButtonStates(btnPerformance, btnGamePad, btnMouseCursor);
+                Intent intent = new Intent(game, TouchGamepadEditorActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                game.startActivity(intent);
+            }
+        });
+
+        // 陀螺仪 & 手搓设置
+        btnGyroSettings.setOnClickListener(v -> {
+            dismiss();
+            if (game != null) {
+                game.startActivity(new Intent(game, com.limelight.gyro.GyroSettingsActivity.class));
             }
         });
 
@@ -79,15 +91,7 @@ public class GameMenuDialog extends DialogFragment {
         btnGamePad.setOnClickListener(v -> {
             if (game != null) {
                 game.toggleOnscreenController();
-                updateButtonStates(btnPerformance, btnGamePad, btnMouseCursor);
-            }
-        });
-
-        // 触控灵敏度
-        btnTouchSens.setOnClickListener(v -> {
-            dismiss();
-            if (game != null) {
-                game.showTouchSensitivityDialog();
+                updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
             }
         });
 
@@ -99,11 +103,11 @@ public class GameMenuDialog extends DialogFragment {
             }
         });
 
-        // 快捷键
-        btnQuickKeys.setOnClickListener(v -> {
-            dismiss();
+        // 性能信息切换
+        btnPerformance.setOnClickListener(v -> {
             if (game != null) {
-                game.showQuickKeysDialog();
+                game.togglePerformanceOverlay();
+                updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
             }
         });
 
@@ -111,7 +115,15 @@ public class GameMenuDialog extends DialogFragment {
         btnMouseCursor.setOnClickListener(v -> {
             if (game != null) {
                 game.toggleMouseCursor();
-                updateButtonStates(btnPerformance, btnGamePad, btnMouseCursor);
+                updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
+            }
+        });
+
+        // 快捷键
+        btnQuickKeys.setOnClickListener(v -> {
+            dismiss();
+            if (game != null) {
+                game.showQuickKeysDialog();
             }
         });
 
@@ -132,7 +144,7 @@ public class GameMenuDialog extends DialogFragment {
         });
     }
 
-    private void updateButtonStates(Button btnPerf, Button btnPad, Button btnMouse) {
+    private void updateToggleButtons(Button btnPerf, Button btnPad, Button btnMouse) {
         if (prefConfig == null) return;
 
         boolean perfOn = prefConfig.enablePerfOverlay;
@@ -154,7 +166,6 @@ public class GameMenuDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        // 菜单关闭后恢复悬浮按钮可见
         if (floatingButton != null) {
             floatingButton.setVisibility(View.VISIBLE);
         }
@@ -172,7 +183,6 @@ public class GameMenuDialog extends DialogFragment {
             modifier[0] |= getModifier(key);
         }
 
-        // 25ms 后释放
         new android.os.Handler().postDelayed(() -> {
             for (int i = keys.length - 1; i >= 0; i--) {
                 short key = keys[i];

@@ -42,7 +42,6 @@ import com.limelight.utils.SpinnerDialog;
 import com.limelight.utils.UiHelper;
 import com.limelight.ui.floating.FloatingMenuButton;
 import com.limelight.ui.gamemenu.GameMenuDialog;
-import com.limelight.ui.gamemenu.TouchSensitivityDialog;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -237,8 +236,8 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         touchOverlay = new TouchGamepadOverlay(this);
         touchOverlay.setInjector(this);
         touchOverlay.setOnGestureListener(() -> {
-            // 长按设置按钮打开陀螺仪瞄准设置
-            startActivity(new Intent(Game.this, com.limelight.gyro.GyroSettingsActivity.class));
+            // 长按设置按钮打开统一游戏菜单
+            showGameMenu();
         });
         rootLayout.addView(touchOverlay, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -2134,9 +2133,9 @@ public class Game extends Activity implements SurfaceHolder.Callback,
                             toggleKeyboard();
                             return true;
                         }
-                        // 四指点击：打开陀螺仪瞄准设置
+                        // 四指点击：打开统一游戏菜单
                         if (event.getEventTime() - fourFingerDownTime < FOUR_FINGER_TAP_THRESHOLD) {
-                            startActivity(new Intent(Game.this, com.limelight.gyro.GyroSettingsActivity.class));
+                            showGameMenu();
                             return true;
                         }
                     }
@@ -2896,13 +2895,6 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     /** 鼠标光标是否可见 */
     public boolean isCursorVisible() {
         return cursorVisible;
-    }
-
-    /** 显示触控灵敏度调节对话框 */
-    public void showTouchSensitivityDialog() {
-        TouchSensitivityDialog dialog = new TouchSensitivityDialog();
-        dialog.setPrefConfig(prefConfig);
-        dialog.show(getFragmentManager(), "TouchSensitivity");
     }
 
     /** 显示快捷键对话框 */

@@ -273,13 +273,16 @@
     <string name="resolution_480p">480p</string>
     <string name="resolution_720p">720p</string>
     <string name="resolution_1080p">1080p</string>
+    <string name="resolution_1200p">1200p</string>
     <string name="resolution_1440p">1440p</string>
+    <string name="resolution_1600p">1600p</string>
     <string name="resolution_4k">4K</string>
 
     <string name="fps_30">30 FPS</string>
     <string name="fps_60">60 FPS</string>
     <string name="fps_90">90 FPS</string>
     <string name="fps_120">120 FPS</string>
+    <string name="fps_144">144 FPS</string>
 
     <string name="audioconf_stereo">Stereo</string>
     <string name="audioconf_51surround">5.1 Surround Sound</string>

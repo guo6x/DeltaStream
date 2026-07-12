@@ -79,6 +79,15 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file('E:/app_update/DeltaStream/deltastream.keystore')
+            storePassword ''
+            keyAlias 'deltastream'
+            keyPassword ''
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -89,10 +98,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         performance {
-            // Keep the existing debug application ID and signing key so this build can
-            // replace the development APK without wiping hosts, preferences, or layouts.
-            applicationIdSuffix ".debug"
-            signingConfig signingConfigs.debug
+            // Official DeltaStream release build: uses com.deltastream package and release signing key.
+            applicationIdSuffix ""
+            signingConfig signingConfigs.release
             resValue "string", "app_label", "DeltaStream"
             resValue "string", "app_label_root", "DeltaStream (Root)"
 

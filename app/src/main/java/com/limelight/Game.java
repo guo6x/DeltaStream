@@ -40,6 +40,9 @@ import com.limelight.utils.ServerHelper;
 import com.limelight.utils.ShortcutHelper;
 import com.limelight.utils.SpinnerDialog;
 import com.limelight.utils.UiHelper;
+import com.limelight.ui.floating.FloatingMenuButton;
+import com.limelight.ui.gamemenu.GameMenuDialog;
+import com.limelight.ui.gamemenu.TouchSensitivityDialog;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -127,6 +130,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     private NvConnection conn;
     private GyroAimManager gyroAimManager;
     private TouchGamepadOverlay touchOverlay;
+    private FloatingMenuButton floatingMenuButton;
     private SpinnerDialog spinner;
     private boolean displayedFailureDialog = false;
     private boolean connecting = false;
@@ -238,6 +242,12 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         });
         rootLayout.addView(touchOverlay, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // 添加悬浮菜单按钮（借鉴阿西西 AXFloatingView，精简实现）
+        floatingMenuButton = new FloatingMenuButton(this);
+        floatingMenuButton.setDefaultPosition();
+        floatingMenuButton.setOnMenuClickListener(() -> showGameMenu());
+        rootLayout.addView(floatingMenuButton);
 
         // Start the spinner
         spinner = SpinnerDialog.displayDialog(this, getResources().getString(R.string.conn_establishing_title),
@@ -2818,4 +2828,135 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     @Override
     public boolean isConnected() {
         return conn != null && connected;
-    }}
+    }
+
+    // ===== 游戏内悬浮菜单方法（借鉴阿西西 GameMenuFragment） =====
+
+    /** 显示游戏菜单 */
+    public void showGameMenu() {
+        if (!connected) return;
+        // 隐藏悬浮按钮，避免遮挡菜单
+        if (floatingMenuButton != null) {
+            floatingMenuButton.setVisibility(View.INVISIBLE);
+        }
+        GameMenuDialog dialog = new GameMenuDialog();
+        dialog.setGame(this);
+        dialog.setConn(conn);
+        dialog.setPrefConfig(prefConfig);
+        dialog.setFloatingButton(floatingMenuButton);
+        dialog.show(getFragmentManager(), "GameMenu");
+    }
+
+    /** 切换性能信息显示 */
+    public void togglePerformanceOverlay() {
+        prefConfig.enablePerfOverlay = !prefConfig.enablePerfOverlay;
+        android.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean("checkbox_enable_perf_overlay", prefConfig.enablePerfOverlay)
+                .apply();
+        performanceOverlayView.setVisibility(prefConfig.enablePerfOverlay ? View.VISIBLE : View.GONE);
+    }
+
+    /** 切换虚拟手柄显示 */
+    public void toggleOnscreenController() {
+        prefConfig.onscreenController = !prefConfig.onscreenController;
+        android.preference.PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean("checkbox_show_onscreen_controls", prefConfig.onscreenController)
+                .apply();
+        if (virtualController != null) {
+            if (prefConfig.onscreenController) {
+                virtualController.show();
+            } else {
+                virtualController.hide();
+            }
+        } else if (prefConfig.onscreenController) {
+            // 首次启用时创建
+            virtualController = new VirtualController(controllerHandler,
+                    (FrameLayout) streamView.getParent(), this);
+            virtualController.refreshLayout();
+            virtualController.show();
+        }
+    }
+
+    /** 切换鼠标光标显示 */
+    public void toggleMouseCursor() {
+        if (!grabbedInput) {
+            inputCaptureProvider.enableCapture();
+            grabbedInput = true;
+        }
+        cursorVisible = !cursorVisible;
+        if (cursorVisible) {
+            inputCaptureProvider.showCursor();
+        } else {
+            inputCaptureProvider.hideCursor();
+        }
+    }
+
+    /** 鼠标光标是否可见 */
+    public boolean isCursorVisible() {
+        return cursorVisible;
+    }
+
+    /** 显示触控灵敏度调节对话框 */
+    public void showTouchSensitivityDialog() {
+        TouchSensitivityDialog dialog = new TouchSensitivityDialog();
+        dialog.setPrefConfig(prefConfig);
+        dialog.show(getFragmentManager(), "TouchSensitivity");
+    }
+
+    /** 显示快捷键对话框 */
+    public void showQuickKeysDialog() {
+        final String[] items = {
+                "ESC",
+                "Alt+F4",
+                "Ctrl+V (粘贴)",
+                "Win+D (桌面)",
+                "Win+E (我的电脑)",
+                "Win+P (投影)",
+                "Win+I (设置)",
+                "Win+Tab (任务视图)",
+                "Ctrl+Shift+Esc (任务管理器)",
+                "Alt+Enter"
+        };
+        final short[][] keySequences = {
+                { KeyboardTranslator.VK_ESCAPE },
+                { KeyboardTranslator.VK_LMENU, KeyboardTranslator.VK_F4 },
+                { KeyboardTranslator.VK_LCONTROL, KeyboardTranslator.VK_V },
+                { KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_D },
+                { KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_E },
+                { KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_P },
+                { KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_I },
+                { KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_TAB },
+                { KeyboardTranslator.VK_LCONTROL, KeyboardTranslator.VK_LSHIFT, KeyboardTranslator.VK_ESCAPE },
+                { KeyboardTranslator.VK_LMENU, KeyboardTranslator.VK_RETURN }
+        };
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("快捷键");
+        builder.setItems(items, (dialog, which) -> {
+            if (conn != null && connected && which >= 0 && which < keySequences.length) {
+                GameMenuDialog.sendKeys(conn, keySequences[which]);
+            }
+        });
+        builder.show();
+    }
+
+    /** 断开连接 */
+    public void disconnect() {
+        stopConnection();
+        finish();
+    }
+
+    /** 退出串流 */
+    public void quitStreaming() {
+        if (conn != null && connected) {
+            new Thread() {
+                public void run() {
+                    conn.stop();
+                }
+            }.start();
+        }
+        connecting = connected = false;
+        finish();
+    }
+}

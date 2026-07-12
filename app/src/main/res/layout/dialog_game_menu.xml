@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#E6222222"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DeltaStream 菜单"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="10dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="360dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 性能信息 -->
+            <Button
+                android:id="@+id/btn_performance"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="性能信息: 关"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <!-- 虚拟手柄 -->
+            <Button
+                android:id="@+id/btn_game_pad"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="虚拟手柄: 关"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <!-- 触控灵敏度 -->
+            <Button
+                android:id="@+id/btn_touch_sensitivity"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="触控灵敏度"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <!-- 软键盘 -->
+            <Button
+                android:id="@+id/btn_soft_keyboard"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="软键盘"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <!-- 快捷键 -->
+            <Button
+                android:id="@+id/btn_quick_keys"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="快捷键"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <!-- 鼠标光标 -->
+            <Button
+                android:id="@+id/btn_mouse_cursor"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="鼠标光标: 隐藏"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#444444"
+                android:layout_marginVertical="6dp" />
+
+            <!-- 断开连接 -->
+            <Button
+                android:id="@+id/btn_unlink"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="断开连接"
+                android:textColor="#FF6B6B"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="4dp" />
+
+            <!-- 退出串流 -->
+            <Button
+                android:id="@+id/btn_exit"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="退出串流"
+                android:textColor="#FF6B6B"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

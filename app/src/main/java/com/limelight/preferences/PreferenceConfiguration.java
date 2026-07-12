@@ -111,6 +111,13 @@ public class PreferenceConfiguration {
     private static final boolean DEFAULT_GAMEPAD_MOTION_FALLBACK = false;
     private static final boolean DEFAULT_LOW_LATENCY_MODE = true;
 
+    // 触控灵敏度（借鉴阿西西，用于游戏内悬浮菜单实时调节）
+    private static final String TOUCH_SENSITIVITY_X_PREF_STRING = "seekbar_touch_sensitivity_x";
+    private static final String TOUCH_SENSITIVITY_Y_PREF_STRING = "seekbar_touch_sensitivity_y";
+    private static final String TOUCH_SENSITIVITY_ENABLED_PREF_STRING = "checkbox_touch_sensitivity_enabled";
+    private static final int DEFAULT_TOUCH_SENSITIVITY = 100;
+    private static final boolean DEFAULT_TOUCH_SENSITIVITY_ENABLED = false;
+
     public static final int FRAME_PACING_MIN_LATENCY = 0;
     public static final int FRAME_PACING_BALANCED = 1;
     public static final int FRAME_PACING_CAP_FPS = 2;
@@ -158,6 +165,11 @@ public class PreferenceConfiguration {
     public boolean gamepadTouchpadAsMouse;
     public boolean gamepadMotionSensorsFallbackToDevice;
     public boolean lowLatencyMode;
+
+    // 触控灵敏度字段
+    public int touchSensitivityX;
+    public int touchSensitivityY;
+    public boolean touchSensitivityEnabled;
 
     public static boolean isNativeResolution(int width, int height) {
         // It's not a native resolution if it matches an existing resolution option
@@ -605,6 +617,11 @@ public class PreferenceConfiguration {
         config.gamepadMotionSensors = prefs.getBoolean(GAMEPAD_MOTION_SENSORS_PREF_STRING, DEFAULT_GAMEPAD_MOTION_SENSORS);
         config.gamepadMotionSensorsFallbackToDevice = prefs.getBoolean(GAMEPAD_MOTION_FALLBACK_PREF_STRING, DEFAULT_GAMEPAD_MOTION_FALLBACK);
         config.lowLatencyMode = prefs.getBoolean(LOW_LATENCY_MODE_PREF_STRING, DEFAULT_LOW_LATENCY_MODE);
+
+        // 触控灵敏度
+        config.touchSensitivityX = prefs.getInt(TOUCH_SENSITIVITY_X_PREF_STRING, DEFAULT_TOUCH_SENSITIVITY);
+        config.touchSensitivityY = prefs.getInt(TOUCH_SENSITIVITY_Y_PREF_STRING, DEFAULT_TOUCH_SENSITIVITY);
+        config.touchSensitivityEnabled = prefs.getBoolean(TOUCH_SENSITIVITY_ENABLED_PREF_STRING, DEFAULT_TOUCH_SENSITIVITY_ENABLED);
 
         return config;
     }

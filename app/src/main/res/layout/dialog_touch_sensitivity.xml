@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#E6222222"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="触控灵敏度"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="12dp" />
+
+    <!-- 总开关 -->
+    <Button
+        android:id="@+id/btn_toggle"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="触控灵敏度: 关"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:background="@drawable/game_menu_btn_selector"
+        android:layout_marginBottom="12dp" />
+
+    <!-- X轴灵敏度 -->
+    <TextView
+        android:id="@+id/tv_x_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="X轴灵敏度: 100%"
+        android:textColor="#CCCCCC"
+        android:textSize="13sp"
+        android:paddingBottom="4dp" />
+
+    <SeekBar
+        android:id="@+id/sb_x"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="300"
+        android:progress="100"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Y轴灵敏度 -->
+    <TextView
+        android:id="@+id/tv_y_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Y轴灵敏度: 100%"
+        android:textColor="#CCCCCC"
+        android:textSize="13sp"
+        android:paddingBottom="4dp" />
+
+    <SeekBar
+        android:id="@+id/sb_y"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="300"
+        android:progress="100"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 重置按钮 -->
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="重置默认"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:background="@drawable/game_menu_btn_selector" />
+
+</LinearLayout>

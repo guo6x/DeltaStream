@@ -55,6 +55,20 @@ public class KeyboardTranslator implements InputManager.InputDeviceListener {
     public static final int VK_QUOTE = 222;
     public static final int VK_PAUSE = 19;
 
+    // 扩展 VK 常量（用于游戏内悬浮菜单快捷键发送）
+    public static final int VK_F4 = 115;
+    public static final int VK_D = 68;
+    public static final int VK_E = 69;
+    public static final int VK_I = 73;
+    public static final int VK_P = 80;
+    public static final int VK_V = 86;
+    public static final int VK_X = 88;
+    public static final int VK_LWIN = 91;
+    public static final int VK_LSHIFT = 160;
+    public static final int VK_LCONTROL = 162;
+    public static final int VK_LMENU = 164;
+    public static final int VK_RETURN = 13;
+
     private static class KeyboardMapping {
         private final InputDevice device;
         private final int[] deviceKeyCodeToQwertyKeyCode;

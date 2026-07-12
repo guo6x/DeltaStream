@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -62,12 +63,14 @@ public class GameMenuDialog extends DialogFragment {
         Button btnGamePad = dialog.findViewById(R.id.btn_game_pad);
         Button btnSoftKeyboard = dialog.findViewById(R.id.btn_soft_keyboard);
         Button btnPerformance = dialog.findViewById(R.id.btn_performance);
+        Button btnFramePacing = dialog.findViewById(R.id.btn_frame_pacing);
         Button btnMouseCursor = dialog.findViewById(R.id.btn_mouse_cursor);
         Button btnQuickKeys = dialog.findViewById(R.id.btn_quick_keys);
         Button btnUnlink = dialog.findViewById(R.id.btn_unlink);
         Button btnExit = dialog.findViewById(R.id.btn_exit);
 
         updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
+        updateFramePacingButton(btnFramePacing);
 
         // 按键编辑器
         btnKeyEditor.setOnClickListener(v -> {
@@ -109,6 +112,12 @@ public class GameMenuDialog extends DialogFragment {
                 game.togglePerformanceOverlay();
                 updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
             }
+        });
+
+        // 帧步进模式循环切换
+        btnFramePacing.setOnClickListener(v -> {
+            cycleFramePacing();
+            updateFramePacingButton(btnFramePacing);
         });
 
         // 鼠标光标切换
@@ -160,6 +169,52 @@ public class GameMenuDialog extends DialogFragment {
         boolean mouseVisible = (game != null && game.isCursorVisible());
         btnMouse.setText("鼠标光标: " + (mouseVisible ? "显示" : "隐藏"));
         btnMouse.setBackgroundResource(mouseVisible ?
+                R.drawable.game_menu_btn_green_selector : R.drawable.game_menu_btn_selector);
+    }
+
+    private static final String[] PACING_NAMES = {"最低延迟", "平衡", "锁定帧率", "最大平滑"};
+    private static final String[] PACING_VALUES = {"latency", "balanced", "cap-fps", "smoothness"};
+
+    private void cycleFramePacing() {
+        int current = 0;
+        String currentValue = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString("frame_pacing", "latency");
+        for (int i = 0; i < PACING_VALUES.length; i++) {
+            if (PACING_VALUES[i].equals(currentValue)) {
+                current = i;
+                break;
+            }
+        }
+        int next = (current + 1) % PACING_VALUES.length;
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .edit()
+                .putString("frame_pacing", PACING_VALUES[next])
+                .apply();
+        // 同步到内存配置
+        if (prefConfig != null) {
+            switch (next) {
+                case 0: prefConfig.framePacing = PreferenceConfiguration.FRAME_PACING_MIN_LATENCY; break;
+                case 1: prefConfig.framePacing = PreferenceConfiguration.FRAME_PACING_BALANCED; break;
+                case 2: prefConfig.framePacing = PreferenceConfiguration.FRAME_PACING_CAP_FPS; break;
+                case 3: prefConfig.framePacing = PreferenceConfiguration.FRAME_PACING_MAX_SMOOTHNESS; break;
+            }
+        }
+    }
+
+    private void updateFramePacingButton(Button btn) {
+        String value = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString("frame_pacing", "latency");
+        int index = 0;
+        for (int i = 0; i < PACING_VALUES.length; i++) {
+            if (PACING_VALUES[i].equals(value)) {
+                index = i;
+                break;
+            }
+        }
+        btn.setText("帧步进: " + PACING_NAMES[index]);
+        // "最大平滑"和"锁定帧率"用绿色标记（推荐用于卡顿场景）
+        boolean recommended = (index == 3 || index == 2);
+        btn.setBackgroundResource(recommended ?
                 R.drawable.game_menu_btn_green_selector : R.drawable.game_menu_btn_selector);
     }
 

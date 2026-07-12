@@ -98,6 +98,16 @@
                 android:layout_marginBottom="3dp" />
 
             <Button
+                android:id="@+id/btn_frame_pacing"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:text="帧步进: 最低延迟"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="3dp" />
+
+            <Button
                 android:id="@+id/btn_mouse_cursor"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"

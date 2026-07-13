@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.View;
@@ -64,6 +65,7 @@ public class GameMenuDialog extends DialogFragment {
         Button btnSoftKeyboard = dialog.findViewById(R.id.btn_soft_keyboard);
         Button btnPerformance = dialog.findViewById(R.id.btn_performance);
         Button btnFramePacing = dialog.findViewById(R.id.btn_frame_pacing);
+        Button btnAudioOutput = dialog.findViewById(R.id.btn_audio_output);
         Button btnMouseCursor = dialog.findViewById(R.id.btn_mouse_cursor);
         Button btnQuickKeys = dialog.findViewById(R.id.btn_quick_keys);
         Button btnUnlink = dialog.findViewById(R.id.btn_unlink);
@@ -71,6 +73,7 @@ public class GameMenuDialog extends DialogFragment {
 
         updateToggleButtons(btnPerformance, btnGamePad, btnMouseCursor);
         updateFramePacingButton(btnFramePacing);
+        updateAudioOutputButton(btnAudioOutput);
 
         // 按键编辑器
         btnKeyEditor.setOnClickListener(v -> {
@@ -118,6 +121,15 @@ public class GameMenuDialog extends DialogFragment {
         btnFramePacing.setOnClickListener(v -> {
             cycleFramePacing();
             updateFramePacingButton(btnFramePacing);
+        });
+
+        // 音频输出切换（平板 / 电脑），下次连接生效
+        btnAudioOutput.setOnClickListener(v -> {
+            toggleAudioOutput();
+            updateAudioOutputButton(btnAudioOutput);
+            if (game != null) {
+                game.displayTransientMessage("声音输出设置已保存，下次连接生效");
+            }
         });
 
         // 鼠标光标切换
@@ -174,6 +186,23 @@ public class GameMenuDialog extends DialogFragment {
 
     private static final String[] PACING_NAMES = {"最低延迟", "平衡", "锁定帧率", "最大平滑"};
     private static final String[] PACING_VALUES = {"latency", "balanced", "cap-fps", "smoothness"};
+
+    private void toggleAudioOutput() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean hostAudio = prefs.getBoolean("checkbox_host_audio", false);
+        prefs.edit().putBoolean("checkbox_host_audio", !hostAudio).apply();
+        if (prefConfig != null) {
+            prefConfig.playHostAudio = !hostAudio;
+        }
+    }
+
+    private void updateAudioOutputButton(Button btn) {
+        boolean hostAudio = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getBoolean("checkbox_host_audio", false);
+        btn.setText("声音输出: " + (hostAudio ? "电脑" : "平板"));
+        btn.setBackgroundResource(hostAudio ?
+                R.drawable.game_menu_btn_green_selector : R.drawable.game_menu_btn_selector);
+    }
 
     private void cycleFramePacing() {
         int current = 0;

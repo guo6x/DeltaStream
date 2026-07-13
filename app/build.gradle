@@ -81,10 +81,16 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('E:/app_update/DeltaStream/deltastream.keystore')
-            storePassword ''
-            keyAlias 'deltastream'
-            keyPassword ''
+            // 签名密码从 local.properties 读取，不硬编码在仓库中
+            def props = new Properties()
+            def propsFile = rootProject.file('local.properties')
+            if (propsFile.exists()) {
+                props.load(new FileInputStream(propsFile))
+            }
+            storeFile file(props.getProperty('deltastream.storeFile', 'deltastream.keystore'))
+            storePassword props.getProperty('deltastream.storePassword', '')
+            keyAlias props.getProperty('deltastream.keyAlias', 'deltastream')
+            keyPassword props.getProperty('deltastream.keyPassword', '')
         }
     }
 

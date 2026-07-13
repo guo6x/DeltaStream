@@ -439,11 +439,12 @@ public class TouchGamepadOverlay extends View {
     private boolean tryStartSettingsDrag(float x, float y, int pointerId) {
         float dx = x - settingsBtnX;
         float dy = y - settingsBtnY;
-        if (dx * dx + dy * dy <= settingsBtnRadius * settingsBtnRadius * 2.25f) {
+        // 触发区域限制为 1.3 倍半径，避免右下角操作按钮被误识别为设置按钮
+        if (dx * dx + dy * dy <= settingsBtnRadius * settingsBtnRadius * 1.69f) {
             settingsPointerId = pointerId;
             editModeStartTime = SystemClock.elapsedRealtime();
             settingsLongPressTriggered = false;
-            // 长按 600ms 打开陀螺仪设置（避免与6指操作冲突）
+            // 长按 600ms 打开游戏菜单（避免与6指操作冲突）
             postDelayed(() -> {
                 if (settingsPointerId == pointerId && !settingsLongPressTriggered) {
                     settingsLongPressTriggered = true;

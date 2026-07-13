@@ -108,6 +108,16 @@
                 android:layout_marginBottom="3dp" />
 
             <Button
+                android:id="@+id/btn_audio_output"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:text="声音输出: 平板"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:background="@drawable/game_menu_btn_selector"
+                android:layout_marginBottom="3dp" />
+
+            <Button
                 android:id="@+id/btn_mouse_cursor"
                 android:layout_width="match_parent"
                 android:layout_height="42dp"

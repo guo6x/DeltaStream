@@ -191,9 +191,13 @@ public class TouchGamepadConfig {
             String json = sp.getString("config_json", null);
             if (json != null) {
                 cfg.fromJson(new JSONObject(json));
-                return cfg;
             }
         } catch (JSONException ignored) {
+        }
+        // 如果配置损坏导致按钮列表为空，自动恢复默认布局，避免"按键全部消失"
+        if (cfg.buttons == null || cfg.buttons.isEmpty()) {
+            cfg.resetToDefaults();
+            cfg.save(ctx);
         }
         return cfg;
     }

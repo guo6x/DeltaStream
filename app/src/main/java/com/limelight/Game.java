@@ -241,12 +241,14 @@ public class Game extends Activity implements SurfaceHolder.Callback,
         });
         rootLayout.addView(touchOverlay, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        touchOverlay.bringToFront();
 
         // 添加悬浮菜单按钮（借鉴阿西西 AXFloatingView，精简实现）
         floatingMenuButton = new FloatingMenuButton(this);
         floatingMenuButton.setDefaultPosition();
         floatingMenuButton.setOnMenuClickListener(() -> showGameMenu());
         rootLayout.addView(floatingMenuButton);
+        floatingMenuButton.bringToFront();
 
         // Start the spinner
         spinner = SpinnerDialog.displayDialog(this, getResources().getString(R.string.conn_establishing_title),
@@ -254,6 +256,8 @@ public class Game extends Activity implements SurfaceHolder.Callback,
 
         // Read the stream preferences
         prefConfig = PreferenceConfiguration.readPreferences(this);
+        // DeltaStream 自定义触控层是核心输入方式，始终显示（不受旧版虚拟手柄开关影响）
+        touchOverlay.setVisibility(View.VISIBLE);
         tombstonePrefs = Game.this.getSharedPreferences("DecoderTombstone", 0);
 
         // 低延迟模式：保持屏幕常亮，避免 Doze/省电策略引入输入延迟

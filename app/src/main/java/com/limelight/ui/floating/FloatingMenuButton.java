@@ -32,6 +32,7 @@ public class FloatingMenuButton extends FrameLayout {
 
     private int screenWidth;
     private int screenHeight;
+    private int buttonSize;
 
     public interface OnMenuClickListener {
         void onMenuClick();
@@ -39,10 +40,10 @@ public class FloatingMenuButton extends FrameLayout {
 
     public FloatingMenuButton(Context context) {
         super(context);
-        int sizeDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 42, getResources().getDisplayMetrics());
+        buttonSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 42, getResources().getDisplayMetrics());
         int textSizeSp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18, getResources().getDisplayMetrics());
 
-        LayoutParams lp = new LayoutParams(sizeDp, sizeDp);
+        LayoutParams lp = new LayoutParams(buttonSize, buttonSize);
         setLayoutParams(lp);
 
         setBackgroundResource(com.limelight.R.drawable.game_menu_floating_btn);
@@ -138,11 +139,12 @@ public class FloatingMenuButton extends FrameLayout {
         animate().x(targetX).setDuration(200).start();
     }
 
-    /** 设置初始位置（屏幕左侧中间偏上） */
+    /** 设置初始位置（屏幕右侧偏上，避免遮挡左侧游戏按键） */
     public void setDefaultPosition() {
         int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EDGE_MARGIN, getResources().getDisplayMetrics());
         int yOffset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, getResources().getDisplayMetrics());
-        setX(margin);
+        int width = getWidth() > 0 ? getWidth() : buttonSize;
+        setX(screenWidth - width - margin);
         setY(yOffset);
     }
 }

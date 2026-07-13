@@ -44,3 +44,16 @@ app/.externalNativeBuild/
 
 # Note: jniLibs/ contains prebuilt .so libraries needed for building
 # (externalNativeBuild is disabled in build.gradle). Do NOT ignore them.
+
+# 签名文件
+*.keystore
+*.jks
+
+# Sunshine 配置
+sunshine.conf
+*.conf
+
+# 临时脚本
+fix_*.ps1
+fix_*.bat
+修复*.bat
